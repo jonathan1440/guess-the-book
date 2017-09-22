@@ -86,7 +86,7 @@ while booknum < len(booktextfiles):
         #for each string to find...
         for string in stringstofind:
             #find string i in string of line linenum
-            locations = findString(booklines[linenum],i)
+            locations = findString(booklines[linenum],string)
 
             #if any occurances were actually found...
             if len(locations) > 0:
@@ -97,8 +97,11 @@ while booknum < len(booktextfiles):
             time.sleep(0.01)
             
         #if any results, add them to the file
-        if len(rslt) > 0:
-            results.write(result)
+        if len(result) > 0:
+            results.write(linenum)
+            for i in range(len(result)):
+                for j in range(len(result[i])):
+                    
         
         #next line in book
         linenum = linenum + 1        
@@ -116,7 +119,10 @@ while booknum < len(booktextfiles):
     perdata[booknum]['totalbooktime'] = time.gmtime()-booktimer
     perdata[booknum]['linesinbook'] = linenum
     #perdata[booknum]['
+
+    #record performance data
     results.write("")
-    results.write(perdata[booknum])
+    for name,data in perdata.items():
+        results.write(name+" : "+str(data))
 
 print(results)
