@@ -1,30 +1,41 @@
 import os
+import time
 
 print("This script will take a folder of .txt files and search them for strings stored in a .txt file, with each string on its own line.")
 
+#get path to store results under
+print('')
+print("This script will store the results for each book in an individual file.")
+print("What path should the file be created under?")
+print("**Note: if the path includes the folder this script is under, you can start at that level. Otherwise you need to start at the top.")
+resultspath = str(input(": "))
+
 #file path for dir with the files with book text to search through
 print("")
-datapath = str(input("Folder path: "))
+bookspath = str(input("Folder path: "))
 
 #file path for file with the strings to find
 print("")
 sourcepath = str(input("Source .txt path: "))
 
+#start timer
+starttime = time.gmtime()
+
 #array for storing search results
 results = []
 
 #get strings to find in books
-f = open(sourcepath, r)
+f = open(sourcepath, 'r')
 #f.readlines() returns an array of all the lines in the text file f
 stringstofind = f.readlines()
 f.close()
 
 #get books
-datafiles = []
+booktextfiles = []
 #os.walk returns an array something along the lines of [dir path, names of dirs in dir, names of files in dir]
-for (dirpath,dirnames,filenames) in os.walk(datapath):
+for (dirpath,dirnames,filenames) in os.walk(bookspath):
     #add the filenames to datafiles
-    datafiles.extend(filenames)
+    booktextfiles.extend(filenames)
     
 #This function exists solely so I could use recursion :)
 #Also to return multiple indices if possible, instead of the one returned by .find(
@@ -49,38 +60,63 @@ def findString (strtosearch,strtofind):
     #return indices of occurances    
     return num
     
-dcounter = 0
+#for storing performance data
+perdata = []
+    
+booknum = 0
 #for each book...
-while dcounter < len(datafiles):
+while booknum < len(booktextfiles):
+    #start book timer
+    booktimer = time.gmtime()
+    
     #get text of book
-    f = open(datafiles[i],r)
+    f = open(bookspath+"\\"+booktextfiles[booknum], mode='r', encoding='utf8')
     booklines = f.readlines()
     f.close()
-
-    #create element for this book's data
-    results.append([])
     
-    tcounter = 0
+    #create/open a file for storing results from this book
+    results = open(resultspath+"\\"+booktextfiles[booknum]+"results.txt","w")
+    
+    linenum = 0
     #for each line in book...
-    while tcounter < len(booklines):
-        #create element in book's element for this line's data
-        results[dcounter].append([])
+    while linenum < len(booklines):
+        #create element to temporarily store book's element for this line's data
+        result = []
         
         #for each string to find...
-        for i in stringstofind:
-            #find string i in string booklines[tcounter]
-            locations = findString(booklines[tcounter],i)
+        for string in stringstofind:
+            #find string i in string of line linenum
+            locations = findString(booklines[linenum],i)
 
             #if any occurances were actually found...
-            if len(locations) != 0:
+            if len(locations) > 0:
                 #add them to the results list
-                results[dcounter][tcounter].append([i,locations])
+                result.append([string[0:len(string)-1],locations])
+                
+            #to help avoid crashing? IDK if this actually helps or not
+            time.sleep(0.01)
             
+        #if any results, add them to the file
+        if len(rslt) > 0:
+            results.write(result)
+        
         #next line in book
-        tcounter = tcounter + 1
+        linenum = linenum + 1        
+    
+    #close results file
+    results.close()
     
     #next book
-    dcounter = dcounter +1
-
+    booknum = booknum +1
+    
+    #end book timer
+    perdata.append([])
+    perdata[booknum]['filepath'] = bookspath+"\\"+booktextfiles[booknum]
+    perdata[booknum]['bookanalysisstart'] = booktimer
+    perdata[booknum]['totalbooktime'] = time.gmtime()-booktimer
+    perdata[booknum]['linesinbook'] = linenum
+    #perdata[booknum]['
+    results.write("")
+    results.write(perdata[booknum])
 
 print(results)
