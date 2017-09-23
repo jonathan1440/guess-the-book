@@ -1,4 +1,3 @@
-import os
 import time
 
 print("This script will take a folder of .txt files and search them for strings stored in a .txt file, with each string on its own line.")
@@ -65,8 +64,9 @@ def findString (strtosearch,strtofind):
 #for storing performance data, will be a dict
 perdata = []
     
-#counter
+#counters
 booknum = 0
+counter = 0
 #for each book...
 while booknum < len(booktextfiles):
     #start book timer
@@ -79,6 +79,8 @@ while booknum < len(booktextfiles):
     
     #create or open a file for storing results from this book
     results = open(resultspath+"\\"+booktextfiles[booknum]+"results.txt","w")
+    #if it already existed, empty it
+    results.truncate()
     
     #counter
     linenum = 0
@@ -91,7 +93,10 @@ while booknum < len(booktextfiles):
         for string in stringstofind:
             #find string "string" in string of line "linenum"
             locations = findString(booklines[linenum],string)
-
+            #for debug
+            print(counter)
+            counter += 1
+            
             #if any occurances were found...
             if len(locations) > 0:
                 #add them to the results list
@@ -99,7 +104,7 @@ while booknum < len(booktextfiles):
             #----<----
                 
             #to help avoid crashing? IDK if this actually helps or not
-            time.sleep(0.01)
+            #time.sleep(0.00005)
         #----<----
             
         #if any results, add them to the results file
@@ -112,14 +117,14 @@ while booknum < len(booktextfiles):
                 #unfortunately the .write() function only takes strings, so...
                 writeline = ""
                 #add the particular string to line
-                writeline.join(result[i][0])
+                writeline.join(str(result[i][0]))
                 #using str.join() is more efficient than += when compiling
                 writeline.join(": ")
                 
                 #for each index in the line where the string occured...
                 for j in range(len(result[i][1])):
                     #add the index to the line
-                    writeline.join(result[i][1][j])
+                    writeline.join(str(result[i][1][j]))
                     writeline.join(", ")
                 #----<----
                 
