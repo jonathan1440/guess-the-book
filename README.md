@@ -7,4 +7,4 @@ Then I wrote a script to compare those strings to the texts of selected books.
 
 All the occurances of the strings will be recorded, and that data will then be used to determine which book is most likely to be in the jar.
 
-After looking at the strings, I was able to narrow the options down to one of the Huger Games books.
+After looking at the strings manually, I was able to narrow the options down to the Huger Games books.
